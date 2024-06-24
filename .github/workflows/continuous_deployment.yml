@@ -4,18 +4,21 @@ on: [push]
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-      - uses: actions-rs/toolchain@v1
+      - name: Build
+        uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable
-          target: wasm32-unknown-unknown
+         toolchain: stable
+         target: wasm32-unknown-unknown
       - uses: jetli/trunk-action@v0.5.0
       - uses: jetli/wasm-bindgen-action@v0.2.0
       - uses: actions/checkout@v3
-
       - run: trunk build --release --features webgl
 
-      - uses: peaceiris/actions-gh-pages@v3
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
         if: github.ref == 'refs/heads/main'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
