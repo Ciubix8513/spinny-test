@@ -2,13 +2,10 @@ name: Continuous deployment
 on: [push]
 
 jobs:
-  release:
+  build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
-      - name: Build
-        uses: actions-rs/toolchain@v1
+      - uses: actions-rs/toolchain@v1
         with:
          toolchain: stable
          target: wasm32-unknown-unknown
@@ -16,10 +13,19 @@ jobs:
       - uses: jetli/wasm-bindgen-action@v0.2.0
       - uses: actions/checkout@v3
       - run: trunk build --release --features webgl
-
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
-        if: github.ref == 'refs/heads/main'
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+      - run: tar czfv github-pages.tar.gz --directory=dist .
+      - uses: actions/upload-pages-artifact@v3
+  deploy:
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.output.page_url }}
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Deploy 
+        id: deployment
+        uses: actions/deploy-pages@v4
