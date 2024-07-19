@@ -12,3 +12,8 @@ lunar-engine-derive= {git="https://github.com/ciubix8513/lunar-engine.git"}
 
 [features]
 webgl = ["lunar-engine/webgl"]
+
+[profile.release]
+strip = true
+lto = true
+opt-level=3
