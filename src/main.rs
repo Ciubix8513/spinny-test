@@ -3,8 +3,8 @@ use lunar_engine::{
     assets,
     components::{camera::MainCamera, mesh::Mesh, transform::Transform},
     ecs::{Component, ComponentReference, EntityBuilder},
-    math::vec3::Vec3,
-    system::rendering::{self, extensions::Base},
+    math::Vec3,
+    rendering::{self, extensions::Base},
 };
 use lunar_engine_derive::{self, dependencies};
 
@@ -70,8 +70,8 @@ fn init(state: &mut State) {
         )));
     let texture = state
         .asset_store
-        .register(assets::Texture::static_bmp(include_bytes!(
-            "../assets/blahaj.bmp"
+        .register(assets::Texture::static_png(include_bytes!(
+            "../assets/blahaj.png"
         )));
 
     let mat = state
