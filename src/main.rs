@@ -80,7 +80,10 @@ fn init(state: &mut State) {
 
     state.world.add_entity(
         EntityBuilder::new()
-            .add_component::<Transform>()
+            .create_component(|| Transform {
+                scale: Vec3::new(1.5, 1.5, 1.5),
+                ..Default::default()
+            })
             .create_component(|| Spin::new(256.0))
             .create_component(|| Mesh::new(mesh, mat))
             .create()
