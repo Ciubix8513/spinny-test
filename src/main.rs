@@ -1,7 +1,11 @@
 use lunar_engine::{
     asset_managment::AssetStore,
     assets,
-    components::{camera::MainCamera, mesh::Mesh, transform::Transform},
+    components::{
+        camera::{MainCamera, ProjectionType},
+        mesh::Mesh,
+        transform::Transform,
+    },
     ecs::{Component, ComponentReference, EntityBuilder},
     math::Vec3,
     rendering::{self, extensions::Base},
@@ -15,7 +19,7 @@ struct Spin {
 }
 
 impl Spin {
-    fn new(speed: f32) -> Self {
+    const fn new(speed: f32) -> Self {
         Self {
             speed,
             transform: None,
@@ -29,7 +33,7 @@ impl Component for Spin {
     where
         Self: Sized,
     {
-        Spin {
+        Self {
             speed: 0.0,
             transform: None,
         }
@@ -76,7 +80,7 @@ fn init(state: &mut State) {
 
     let mat = state
         .asset_store
-        .register::<assets::Material>(assets::materials::TextureUnlit::new(texture).into());
+        .register::<assets::Material>(assets::materials::TextureUnlit::new(texture));
 
     state.world.add_entity(
         EntityBuilder::new()
@@ -92,10 +96,14 @@ fn init(state: &mut State) {
 
     state.world.add_entity(
         EntityBuilder::new()
-            .create_component(|| Transform::new(Vec3::new(0.0, 0.0, 7.5), 0.0.into(), (1.0).into()))
             .create_component(|| {
-                let mut c = MainCamera::default();
-                c.fov = std::f32::consts::FRAC_PI_3;
+                Transform::new(Vec3::new(0.0, 0.0, -7.5), 0.0.into(), (1.0).into())
+            })
+            .create_component(|| {
+                let mut c = MainCamera::mew();
+                c.projection_type = ProjectionType::Perspective {
+                    fov: std::f32::consts::FRAC_PI_3,
+                };
                 c.near = 0.1;
                 c.far = 100.0;
                 c
